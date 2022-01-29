@@ -4,6 +4,7 @@
 #include <iomanip>
 #include <cmath>
 #include <thread>
+#include <signal.h>
 
 #ifdef _OPENMP
 #include <omp.h>
