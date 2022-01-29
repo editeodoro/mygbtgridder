@@ -1,0 +1,4 @@
+#!/bin/bash
+
+python /Users/edt/Dropbox/Codex/MyUtils/mygbtgridder/src/gbtgridder.py $*
+
