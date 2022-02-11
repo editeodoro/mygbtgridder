@@ -261,7 +261,7 @@ def set_output_files(source, frest, args, file_types, verbose=4):
             if not clobber:
                 if verbose > 1:
                     print(typeName + " exists, will not overwrite")
-                return {}
+                return
             else:
                 os.remove(typeName)
                 if verbose > 3:
@@ -373,8 +373,8 @@ def gbtgridder(args):
 
                 # this also checks that the output files are OK to write
                 # given the value of the clobber argument
-                outputFiles = set_output_files(source, frest, args, ["cube","weight","line","cont"],
-                                               verbose=verbose)
+                outputFiles = set_output_files(source, frest, args,\
+                                               ["cube","weight","line","cont"],verbose=verbose)
                 if len(outputFiles) == 0:
                     if verbose > 1:
                         print("Unable to write to output files")
@@ -630,10 +630,11 @@ def gbtgridder(args):
         print("Gridding")
  
     try:
-        (cube, weight, beam_fwhm) = grid_otf(data, xsky, ysky, wcsObj, len(faxis),\
-                                             xsize, ysize, pix_scale, weight=wt, beam_fwhm=beam_fwhm,\
-                                             kern=args.kernel, gauss_fwhm=gauss_fwhm,\
-                                             verbose=verbose, useC=useC, threads=threads)
+        cube, weight, beam_fwhm = grid_otf(data, xsky, ysky, wcsObj, len(faxis),\
+                                           xsize, ysize, pix_scale, weight=wt, \
+                                           beam_fwhm=beam_fwhm, kern=args.kernel, \
+                                           gauss_fwhm=gauss_fwhm, verbose=verbose, \
+                                           useC=useC, threads=threads)
     except MemoryError:
         if verbose > 1:
             print("Not enough memory to create the image cubes necessary to grid this data")

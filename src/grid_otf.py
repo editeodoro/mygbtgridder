@@ -36,9 +36,9 @@ try:
     libobj = np.ctypeslib.load_library("grid_otflib.so",libdir)
     C_available = True
     libobj.grid_otf_C.restype = POINTER(c_float)
-    libobj.grid_otf_C.argtypes = [array_1d_float,c_int,c_int,
+    libobj.grid_otf_C.argtypes = [array_1d_float,c_size_t,c_size_t,
                                   array_1d_double,array_1d_double,array_1d_double,
-                                  c_int,c_int,c_char_p,c_double,c_double,array_1d_double,
+                                  c_size_t,c_size_t,c_char_p,c_double,c_double,array_1d_double,
                                   c_int,c_double,c_double,c_double,c_int]
 except:
     print ("Cannot find C library, C functions will not be available.")
@@ -273,7 +273,7 @@ def grid_otf(data, xsky, ysky, wcsObj, nchan, xsize, ysize, pix_scale, weight=No
                 counterStr = counterFormat % (i+1)
                 sys.stdout.write("\r%s" % counterStr)
                 sys.stdout.flush()
-            for j in range(ny):        
+            for j in range(ny):
           
                 if kern == "nearest":
                     xdist = x_pix-i

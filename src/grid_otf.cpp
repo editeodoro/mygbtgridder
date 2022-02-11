@@ -5,6 +5,7 @@
 #include <cmath>
 #include <thread>
 #include <signal.h>
+#include <new>
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -28,9 +29,9 @@ double interpolate(double *yData, size_t size, double x) {
 extern "C"
 {
 
-float *grid_otf_C(float *data, int nspectra, int nchan,                  // Data has dimensions (nchan, nspectra)
+float *grid_otf_C(float *data, size_t nspectra, size_t nchan,            // Data has dimensions (nchan, nspectra)
                    double *weights, double* x_pix, double *y_pix,        // These have dimension (nspectra)
-                   int nx, int ny,                                       // X and Y size of datacube 
+                   size_t nx, size_t ny,                                 // X and Y size of datacube 
                    const char* kernel,
                    double r_support_pix_sqrd, double pre_delta_pix_sqrd,
                    double *pre_conv_fn, int pre_conv_size,
@@ -41,8 +42,13 @@ float *grid_otf_C(float *data, int nspectra, int nchan,                  // Data
     signal(SIGINT, signalHandler);
     
     std::string kern = kernel;
-    float *data_cube = new float[nchan*ny*nx];
-    for (auto i=0; i<nchan*ny*nx; i++) data_cube[i] = 0;
+    float *data_cube; 
+    try { data_cube = new float[nx*ny*nchan]; }
+    catch (std::bad_alloc &badAlloc) {
+       std::cerr << "Memory allocation ERROR, not enough memory! Exiting ..." << std::endl;
+       std::abort();
+    }
+    for (auto i=nchan*ny*nx; i--;) data_cube[i]=0;
     
     // Starting main loop over all spectra
     std::cout << "Processing " << nspectra << " spectra ...    " << std::flush;
@@ -102,7 +108,6 @@ float *grid_otf_C(float *data, int nspectra, int nchan,                  // Data
 
         if (keep.size()==0) continue;
 
-        // PLACE A MINIMUM THRESHOLD NEEDED TO CONSIDER A GRID POINT
         if (coverage>cutoff_conv_fn && wsum>0) {
             for (auto k=0; k<keep.size(); k++) {
                 for (auto z=0; z<nchan; z++) {
